@@ -413,14 +413,14 @@
       inherit: true,
       rules: [],
       colors: {
-        "editor.background": "#0b0f14",
-        "editorGutter.background": "#0b0f14",
+        "editor.background": "#050505",
+        "editorGutter.background": "#050505",
         "editorLineNumber.foreground": "#6a727d",
         "editorLineNumber.activeForeground": "#e3e8ee",
         "editorCursor.foreground": "#59abff",
         "editor.selectionBackground": "#19344f",
         "editor.inactiveSelectionBackground": "#14293d",
-        "editor.lineHighlightBackground": "#0e131a"
+        "editor.lineHighlightBackground": "#0b0b0b"
       }
     });
 
