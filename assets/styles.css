@@ -83,7 +83,7 @@ body {
   padding: 0 8px 0 10px;
   border: 1px solid transparent;
   border-radius: 8px;
-  background: #0a0a0a;
+  background: #050505;
   color: var(--tab-idle-text);
   white-space: nowrap;
   cursor: pointer;
@@ -93,14 +93,19 @@ body {
 
 .tab-item:hover {
   border-color: #1a2737;
-  background: #10151b;
+  background: #050505;
 }
 
 .tab-item.is-active {
   color: var(--tab-active-text);
   background: linear-gradient(180deg, var(--tab-active-start), var(--tab-active-end));
-  border-color: #85c5ff;
+  border-color: transparent;
   box-shadow: none;
+}
+
+.tab-item:focus,
+.tab-item:focus-visible {
+  outline: none;
 }
 
 .tab-doc-icon {
