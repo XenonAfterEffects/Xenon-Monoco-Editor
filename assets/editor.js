@@ -2,6 +2,7 @@
   "use strict";
 
   var DEFAULT_WELCOME_TEXT = "-- Welcome to Xenon Executer!";
+  var AUTO_WRAP_MIN_COLUMN = 40;
 
   var state = {
     editor: null,
@@ -150,6 +151,52 @@
         tabsElement.appendChild(tabButton);
       })();
     }
+  }
+
+  function getAutoWrapColumn() {
+    if (!state.editor || !window.monaco || !window.monaco.editor) {
+      return 120;
+    }
+
+    var layoutInfo = state.editor.getLayoutInfo();
+    var fontInfo = state.editor.getOption(window.monaco.editor.EditorOption.fontInfo);
+    var charWidth = fontInfo && fontInfo.typicalHalfwidthCharacterWidth ? fontInfo.typicalHalfwidthCharacterWidth : 8;
+    var contentWidth = layoutInfo && layoutInfo.contentWidth ? layoutInfo.contentWidth : 960;
+    var computedColumn = Math.floor(Math.max(100, contentWidth - 8) / Math.max(1, charWidth));
+
+    return Math.max(AUTO_WRAP_MIN_COLUMN, computedColumn);
+  }
+
+  function autoInsertNewlineAtEdge() {
+    if (!state.editor || !window.monaco || !window.monaco.Range) {
+      return;
+    }
+
+    var model = state.editor.getModel();
+    var position = state.editor.getPosition();
+
+    if (!model || !position) {
+      return;
+    }
+
+    var wrapColumn = getAutoWrapColumn();
+    var lineContent = model.getLineContent(position.lineNumber);
+
+    // Position column is caret index (1-based) after the typed character.
+    if (lineContent.length <= wrapColumn || position.column <= wrapColumn + 1) {
+      return;
+    }
+
+    var insertColumn = Math.min(wrapColumn + 1, lineContent.length + 1);
+    var range = new window.monaco.Range(position.lineNumber, insertColumn, position.lineNumber, insertColumn);
+
+    state.editor.executeEdits("xenon-hard-wrap", [
+      {
+        range: range,
+        text: "\n",
+        forceMoveMarkers: true
+      }
+    ]);
   }
 
   function setActiveTab(tabId, focusEditor) {
@@ -368,11 +415,12 @@
       colors: {
         "editor.background": "#0b0f14",
         "editorGutter.background": "#0b0f14",
-        "editorLineNumber.foreground": "#5d6a7e",
-        "editorLineNumber.activeForeground": "#d7deea",
-        "editorCursor.foreground": "#7cb8ff",
-        "editor.selectionBackground": "#1f3650",
-        "editor.inactiveSelectionBackground": "#172839"
+        "editorLineNumber.foreground": "#6a727d",
+        "editorLineNumber.activeForeground": "#e3e8ee",
+        "editorCursor.foreground": "#59abff",
+        "editor.selectionBackground": "#19344f",
+        "editor.inactiveSelectionBackground": "#14293d",
+        "editor.lineHighlightBackground": "#0e131a"
       }
     });
 
@@ -401,6 +449,9 @@
       if (activeTab) {
         activeTab.viewState = state.editor.saveViewState();
       }
+    });
+    state.editor.onDidType(function () {
+      autoInsertNewlineAtEdge();
     });
 
     addTabButton.addEventListener("click", function () {
