@@ -5,8 +5,8 @@
   --strip-bg: #050505;
   --panel-border: #0d0d0d;
   --strip-height: 46px;
-  --tab-active-start: #2f8df3;
-  --tab-active-end: #2a84e6;
+  --tab-active-start: #0d0d0d;
+  --tab-active-end: #0d0d0d;
   --tab-idle-text: #c5ced7;
   --tab-active-text: #eef6ff;
 }
@@ -92,7 +92,7 @@ body {
 }
 
 .tab-item:hover {
-  border-color: #1a2737;
+  border-color: #0d0d0d;
   background: #050505;
 }
 
